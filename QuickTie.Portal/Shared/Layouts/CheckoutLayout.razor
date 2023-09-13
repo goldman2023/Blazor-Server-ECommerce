@@ -1,0 +1,79 @@
+﻿@using QuickTie.Portal.Pages.Checkout.Components
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Shared.Layouts.Checkout
+@inherits LayoutComponentBase
+@inject ICartService _cartService
+
+<PageTitle>Checkout</PageTitle>
+
+<div class="container-lg layout">
+    <div class="banner d-md-none px-4 pt-4">
+        <Header />
+    </div>
+    <div class="row">
+        <div class="checkout-info col-md-7 col-12 pt-4 px-4 d-flex flex-column order-2 order-md-1">
+            <div class="d-none d-md-block">
+                <Header />
+            </div>
+            <div class="content">
+                @Body
+            </div>
+            <Footer />
+        </div>
+        <div class="cart-info col-md-5 col-12 pt-3 px-4 order-1 order-md-2">
+            <div class="section">
+                @if (Cart != null && Cart.Items != null)
+                {
+                    foreach (var item in Cart.Items)
+                    {
+                        <CheckoutCartItem Item="item" />
+                    }
+                }
+                else
+                {
+                    <p class="my-3 mx-auto text-center ">Loading ...</p>
+                }
+               
+            </div>
+            <div class="section d-flex flex-row justify-content-between">
+                <div class="w-100 me-3">
+                    <FloatTextBox Label="Gift card or discount code" @bind-Value="@GiftOrDiscountCode"  />
+
+                </div>
+                <DxButton RenderStyle="ButtonRenderStyle.None" Enabled=!String.IsNullOrEmpty(GiftOrDiscountCode) Text="Apply" CssClass="text-uppercase px-3 py-2 btn-custom-1" />
+
+            </div>
+            <div class="section">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p>Subtotal</p>
+                    <p class="ms-auto">$@Cart?.SubTotalPrice</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-cente">
+                    <p>Shipping</p>
+                    <p class="ms-auto">FREE</p>
+                </div>
+            </div>
+            <div>
+                <div class="section d-flex justify-content-between align-items-cente border-0 pt-3">
+                    <p class="fs-6">Total</p>
+                    <p class="ms-auto">USD <span class="fs-6 fw-bold">$@Cart?.SubTotalPrice</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Cart? Cart { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Cart = await _cartService.GetCartAsync();
+            StateHasChanged();
+        }
+    }
+
+    public string GiftOrDiscountCode { get; set; } = "";
+}

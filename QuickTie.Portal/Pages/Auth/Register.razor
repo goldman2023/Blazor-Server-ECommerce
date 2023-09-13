@@ -1,0 +1,68 @@
+﻿@page "/register"
+@layout AuthLayout
+
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+@using System.ComponentModel.DataAnnotations
+
+<EditForm EditContext="@registerContext"
+            OnValidSubmit="@HandleValidSubmit"
+            Context="EditFormContext">
+    <DataAnnotationsValidator />
+    <div class="card-header text-center py-3 px-5 bg-white border-0">
+        <DxButton Context="logo" RenderStyle="ButtonRenderStyle.None" CssClass="w-100 p-0" NavigateUrl="/">
+            <img height="80" src="images/logo.png" />
+        </DxButton>
+    </div>
+    <div class="card-body">
+        <DxFormLayout CssClass="w-100 mb-3">
+            <DxFormLayoutItem ColSpanMd="6" CssClass="d-block pe-md-1">
+                <FloatTextBox Label="Enter first name" @bind-Value="registerInfo.FirstName" />
+                <ValidationMessage For="@(() => registerInfo.FirstName)" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem ColSpanMd="6" CssClass="d-block ps-md-1">
+                <FloatTextBox Label="Enter last name" @bind-Value="registerInfo.LastName" />
+                <ValidationMessage For="@(() => registerInfo.LastName)" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem ColSpanMd="12" CssClass="d-block">
+                <FloatTextBox Label="Enter email" @bind-Value="registerInfo.Email" />
+                <ValidationMessage For="@(() => registerInfo.Email)" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem ColSpanMd="12" CssClass="d-block">
+                <FloatTextBox Label="Enter password" Type="password" @bind-Value="registerInfo.Password" />
+                <ValidationMessage For="@(() => registerInfo.Password)" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem ColSpanMd="12" CssClass="d-block">
+                <FloatTextBox Label="Confirm password" Type="password" @bind-Value="registerInfo.ConfirmPassword" />
+                <ValidationMessage For="@(() => registerInfo.ConfirmPassword)" />
+            </DxFormLayoutItem>
+        </DxFormLayout>
+        <div class="d-flex justify-content-center mb-3">
+            <DxButton SubmitFormOnClick="true" Text="Register" RenderStyle="ButtonRenderStyle.None" CssClass="btn-custom-primary fw-bold"></DxButton>
+        </div>
+        <div class="text-center">
+            <div class="tm-8 fs-825">
+                Already have an account?
+            </div>
+            <DxButton Text="Login"
+                        NavigateUrl="/login"
+                        RenderStyle="ButtonRenderStyle.Link" />
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public RegisterInfo registerInfo = new RegisterInfo() { };
+    private EditContext registerContext;
+
+    protected override void OnInitialized()
+    {
+        registerContext = new(registerInfo);
+        registerContext.SetFieldCssClassProvider(new ValidationFieldClassProvider());
+    }
+
+    void HandleValidSubmit()
+    {
+        //Handle Register submit
+    }
+}

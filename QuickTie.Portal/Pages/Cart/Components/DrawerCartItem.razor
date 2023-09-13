@@ -1,0 +1,60 @@
+﻿@using QuickTie.Portal.Models
+@inject ICartService _cartService
+
+<div class="cart-line-item d-flex justify-content-between py-3">
+    <div class="pe-2 d-flex">
+        <div class="product-img me-2 bg-secondary bg-opacity-10">
+            <img src=@item.ImageURL alt="Product Image" />
+        </div>
+        <div class="position-relative">
+            <div class="product-info mb-3">
+                <h6>@item.ItemName</h6>
+                <p class="my-1">@item.Type</p>
+            </div>
+            <div class="product-count d-inline-block ">
+                <DxButton RenderStyle="ButtonRenderStyle.None"
+                          IconCssClass="fa-solid fa-minus"
+                          SizeMode="SizeMode.Small"
+                          Click="() => HandleQuantity(-1)"
+                          CssClass="text-secondary " />
+                <span class="fw-bold">@item.Quantity</span>
+                <DxButton RenderStyle="ButtonRenderStyle.None"
+                          IconCssClass="fa-solid fa-plus"
+                          SizeMode="SizeMode.Small"
+                          Click="() => HandleQuantity(1)"
+                          CssClass="text-secondary"  />
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column justify-content-between align-items-end pe-2">
+        <button type="button" class="btn-close" aria-label="Close" @onclick="DeleteItem"></button>
+        <p class="mb-0">$@item.PricePerUnit</p>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public CartItem item { get; set; }
+
+    [Parameter]
+    public EventCallback HandleLoadCart { get; set; }
+
+    public async Task DeleteItem()
+    {
+        await _cartService.RemoveItemAsync(item.ItemId);
+        await HandleLoadCart.InvokeAsync();
+    }
+
+    public async Task HandleQuantity(int step)
+    {
+        item.Quantity += step;
+        if (item.Quantity < 1)
+        {
+            await DeleteItem();
+        }
+        else
+        {
+            await _cartService.UpdateItemAsync(item);
+            await HandleLoadCart.InvokeAsync();
+        }
+    }
+}

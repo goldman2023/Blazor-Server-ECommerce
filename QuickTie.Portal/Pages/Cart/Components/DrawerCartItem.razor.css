@@ -1,0 +1,27 @@
+﻿.cart-line-item {
+    border-bottom: 1px solid #d3d4d5;
+}
+
+.btn-close {
+    transition: .2s;
+}
+    .btn-close:hover {
+        transform: rotate(90deg);
+    }
+
+.product-img {
+    width : 100px;
+    height : 100px;
+}
+
+    .product-img img {
+        width: 100%;
+        height: 100%;
+    }
+.product-info p {
+    font-size : 12px;
+}
+.product-count {
+    font-size: 12px;
+    border: 2px solid #d3d4d5;
+}

@@ -1,0 +1,30 @@
+﻿<div class="header">
+    <div class="logo mb-2 pt-4">
+        <DxButton Context="logo" 
+                  RenderStyle="ButtonRenderStyle.None" 
+                  CssClass="p-0 text-nowrap" 
+                  NavigateUrl="/">
+            <img height="50" src="images/logo.png" />
+        </DxButton>
+    </div>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white">
+            <li class="breadcrumb-item">
+                <DxButton RenderStyle="ButtonRenderStyle.None" 
+                          CssClass="fw-bold text-black p-0" 
+                          NavigateUrl="/"
+                          Text="Home" />
+            </li>
+            <li class="breadcrumb-item active">
+                <DxButton RenderStyle="ButtonRenderStyle.None"
+                          CssClass="fw-bold text-black p-0"
+                          NavigateUrl="/account"
+                          Text="Account" />
+            </li>
+        </ol>
+    </nav>
+</div>
+
+@code {
+
+}

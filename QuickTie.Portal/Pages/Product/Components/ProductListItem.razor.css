@@ -1,0 +1,38 @@
+﻿.product-item {
+    box-shadow: 0 1px 7px 0 #e9e9e9;
+}
+
+.product-img {
+    max-width: 150px;
+    height: 140px;
+    transition: transform .5s ease;
+}
+
+    .product-img:hover {
+        transform: scale(1.1);
+    }
+
+.product-price {
+    color: #9e3039;
+}
+
+.badge {
+    background: #fff;
+    color: #9e3039;
+    border: 1px solid #9e3039;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+.product-description {
+    font-size: 14px;
+}
+
+@media only screen and (max-width: 992px) {
+    .product-item-action {
+        border: none !important;
+    }
+}

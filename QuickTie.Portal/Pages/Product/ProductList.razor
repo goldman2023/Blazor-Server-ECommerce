@@ -1,0 +1,119 @@
+﻿@using QuickTie.Portal.Pages.Product
+@using QuickTie.Portal.Pages.Product.Components
+@using QuickTie.Data.Models
+@using QuickTie.Portal.Models
+@using Microsoft.AspNetCore.Components.Web
+@inject IProduct _productService
+
+<div class="container-fluid px-0 mb-3 product-list">
+    <div class="d-flex flex-wrap border-bottom border-1 pb-2">
+        <div class="col-lg-6 col-12 pb-1">
+            <DxTextBox BindValueMode="BindValueMode.OnDelayedInput" 
+                       InputDelay="500"
+                       CssClass="p-1"
+                       ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
+                       TextChanged="@((newValue) => OnTextChanged(newValue))"
+                       NullText="Search by Name or Reference number">
+                        <Buttons>
+                            <DxEditorButton IconCssClass="oi oi-magnifying-glass" />
+                        </Buttons>
+            </DxTextBox>
+        </div>
+        <div class="col-lg-4 col-12 ms-auto pb-1 d-flex flex-nowrap align-items-center justify-content-end ">
+            <span class="mx-auto">@TotalCount items found</span>
+            <div>
+                <DxTabs @bind-ActiveTabIndex="ActiveTabIndex">
+                    <DxTab TabIconCssClass="fa-solid fa-table-cells"></DxTab>
+                    <DxTab TabIconCssClass="fa-solid fa-bars"></DxTab>
+                </DxTabs>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row product-list-view">
+    @if (TotalCount == 0 && initialDataFetched)
+    {
+        <h3 class="col-12 text-center my-3 fw-bold">No products</h3>
+    }
+    else
+    {
+        
+    @if (ActiveTabIndex == 1)
+    {
+        <Virtualize @ref="productVirtualizer" ItemsProvider="LoadProducts" Context="item">
+            <ItemContent>
+                <ProductListItem productItem="@item" searchText="@CurrentSearchValue" />
+            </ItemContent>
+            <Placeholder>
+                <ListItemPlaceholder />
+            </Placeholder>
+        </Virtualize>
+    } else
+    {
+        <Virtualize @ref="productVirtualizer" ItemsProvider="LoadProducts" Context="item">
+            <ItemContent>
+                <ProductGridItem productItem="@item" searchText="@CurrentSearchValue" />
+            </ItemContent>
+            <Placeholder>
+                <GridItemPlaceholder />
+            </Placeholder>
+        </Virtualize>
+    }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnSearchValueChanged { get; set; }
+
+    [Parameter]
+    public FilterParameter FilterParameter { get; set; }
+
+    public long TotalCount { get; set; }
+    private Virtualize<Product> productVirtualizer { get; set; } = null;
+
+    int ActiveTabIndex { get; set; } = 0;
+    string CurrentSearchValue { get; set; } = "";
+    private bool initialDataFetched = false;
+
+    async void OnTextChanged(string newValue)
+    {
+        CurrentSearchValue = newValue;
+        if (OnSearchValueChanged.HasDelegate)
+        {
+            await OnSearchValueChanged.InvokeAsync(newValue);
+            await RefreshProductsAsync();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        await RefreshProductsAsync();
+    }
+
+    private async Task RefreshProductsAsync()
+    {
+        if (productVirtualizer != null)
+        {
+            await productVirtualizer.RefreshDataAsync();
+        }
+    }
+
+    private async ValueTask<ItemsProviderResult<Product>> LoadProducts(ItemsProviderRequest request)
+    {
+        if (request.Count <= 0)
+        {
+            request = new ItemsProviderRequest(request.StartIndex, 20, request.CancellationToken);
+        }
+
+        var (listProduct, totalCount) = await _productService.GetProductsAsync(request.StartIndex, request.Count, CurrentSearchValue, FilterParameter);
+        TotalCount = totalCount;
+        if (!initialDataFetched)
+        {
+            initialDataFetched = true;
+        }
+        StateHasChanged();
+        return new ItemsProviderResult<Product>(listProduct, (int)TotalCount);
+    }
+}

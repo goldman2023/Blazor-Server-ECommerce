@@ -1,0 +1,53 @@
+﻿@page "/checkout/shipping-method"
+@using QuickTie.Portal.Models
+@layout CheckoutLayout
+
+<div class="contact-info p-3 mt-2">
+    <div class="d-flex flex-row justify-content-between pb-3">
+        <p class="mb-0 text-secondary">Contact</p>
+        <p class="mb-0 w-75 text-start ps-3">Example@example.com</p>
+        <DxButton RenderStyle="ButtonRenderStyle.None" Text="Change" CssClass="fw-bold p-0" NavigateUrl="/checkout/contact-information" />
+    </div>
+    <div class="d-flex flex-row justify-content-between pt-3">
+        <p class="mb-0 text-secondary">Ship to</p>
+        <p class="mb-0 w-75 text-start ps-3">Temp, 224th St, Torrance CA 90501, United States</p>
+        <DxButton RenderStyle="ButtonRenderStyle.None" Text="Change" CssClass="fw-bold p-0" NavigateUrl="/checkout/contact-information" />
+    </div>
+</div>
+<div class="mt-5">
+    <h5 class="fw-bold mb-4">Shipping Method</h5>
+    <fieldset class="shipping-method">
+        <DxRadioGroup Items="@ShippingMethods?.Items"
+                      Value="@SelectedMethod"
+                      ValueChanged="@((ShippingMethodItem? item) => HandleShippingMethodChanged(item))"
+                      CssClass="border-1">
+            <ItemTemplate>
+                <div class="mb-0 d-flex justify-content-between align-items-center shipping-method-item">
+                    <p class="mb-0">@context.Name</p>
+                    <p class="mb-0">@((context.Cost == 0) ? "Free" : ("$" + context.Cost.ToString()))</p>
+                </div>
+            </ItemTemplate>
+        </DxRadioGroup>
+    </fieldset>
+</div>
+
+<div class="d-flex justify-content-between mt-4 mb-4">
+    <DxButton RenderStyle="ButtonRenderStyle.None" Text="< Return to information" CssClass="fw-bold" NavigateUrl="/checkout/contact-information" />
+    <DxButton RenderStyle="ButtonRenderStyle.None" Text="Continue to payment" CssClass="text-uppercase px-3 py-2 btn-custom-1" NavigateUrl="/checkout/payment-method" />
+</div>
+@code {
+    public ShippingMethodItem? SelectedMethod { get; set; }
+    public ShippingMethods? ShippingMethods { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ShippingMethods = new ShippingMethods();
+        SelectedMethod = ShippingMethods.Items.FirstOrDefault();
+    }
+
+    void HandleShippingMethodChanged(ShippingMethodItem item)
+    {
+        SelectedMethod = item;
+        //Handle Shipping Method Changed
+    }
+}

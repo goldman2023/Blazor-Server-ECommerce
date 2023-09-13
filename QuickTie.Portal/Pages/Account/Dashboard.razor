@@ -1,0 +1,25 @@
+﻿@page "/account"
+@layout AccountLayout
+@using QuickTie.Portal.Pages.Account.SubTabs
+
+<div class="px-3 w-100 my-3">
+    <div class="tab">
+        <div class="header d-flex justify-content-between align-items-center flex-wrap">
+            <h4 class="fw-bold mb-0">My Orders</h4>
+            <div>
+                <DxButton CssClass="btn-custom-secondary-outline"
+                          RenderStyle="ButtonRenderStyle.None"
+                          NavigateUrl="/">
+                             <ChildContent>
+                                <span class="fa-solid fa-plus d-md-none"></span>
+                                <span class="d-none d-md-block">New Order</span>
+                        </ChildContent>
+                </DxButton>
+            </div>
+        </div>
+        <Orders />
+    </div>
+</div>
+@code {
+    int ActiveTabIndex { get; set; } = 1;
+}

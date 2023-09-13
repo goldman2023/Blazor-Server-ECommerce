@@ -1,0 +1,19 @@
+﻿.contact-info {
+    border: 1px solid #d9d9d9;
+    font-size: 14px;
+    letter-spacing: .5px;
+}
+
+.contact-info div:first-child {
+    border-bottom : 1px solid #d9d9d9;
+}
+
+.shipping-method {
+    border: 1px solid #d9d9d9;
+    font-size : 14px;
+    letter-spacing : .5px;
+}
+
+.shipping-method-item {
+    cursor : pointer;
+}

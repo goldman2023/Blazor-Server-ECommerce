@@ -1,0 +1,97 @@
+﻿@inject IJSRuntime JSRuntime
+
+<header class="header">
+    <DxMenu DropDownActionMode="MenuDropDownActionMode.Click"
+            DisplayMode="MenuDisplayMode.Desktop"
+            Title="QuickTie"
+            CollapseItemToIconMode="MenuCollapseItemToIconMode.Sequentially"
+            CollapseItemsToHamburgerMenu="true"
+            CssClass="w-100 py-2 container main-header">
+        <TitleTemplate>
+            <div>
+                <DxButton Context="logo" RenderStyle="ButtonRenderStyle.None" CssClass="w-100 p-0 text-nowrap" NavigateUrl="/">
+                    <img height="50" src="images/logo.png" />
+                </DxButton>
+            </div>
+        </TitleTemplate>
+        <Items>
+            <DxMenuItem CssClass="search-menu-item w-100" Position="ItemPosition.Center">
+                <Template>
+                    <div class="d-flex align-content-center align-items-center h-100">
+                        <SearchItem />
+                    </div>
+                </Template>
+            </DxMenuItem>
+            <DxMenuItem Click="ToggleDrawer" Position="ItemPosition.End">
+                <TextTemplate>
+                    <span class="fa-solid fa-cart-shopping menu-item-icon fa-lg"></span>
+                    <div class="menu-item-title">Cart</div>
+                </TextTemplate>
+            </DxMenuItem>
+            <DxMenuItem CssClass="notoggle" Position="ItemPosition.End">
+                <TextTemplate>
+                    @if (Theme)
+                    {
+                        <span class="fa-regular fa-sun menu-item-icon fa-lg"></span>
+                        <div class="menu-item-title">Light</div>
+                    }
+                    else
+                    {
+                        <span class="fa-solid fa-moon menu-item-icon fa-lg"></span>
+                        <div class="menu-item-title">Dark</div>
+                    }
+                </TextTemplate>
+                <Items>
+                    <DxMenuItem Click="()=>ToggleTheme(true)">
+                        <TextTemplate>
+                            <div class="w-100 d-flex align-items-center">
+                                <span class="fa-regular fa-sun menu-item-icon fa-lg"></span>
+                                <span class="menu-item-title">Light</span>
+                            </div>
+                        </TextTemplate>
+                    </DxMenuItem>
+                    <DxMenuItem Click="()=>ToggleTheme(false)">
+                        <TextTemplate>
+                            <div class="w-100 d-flex align-items-center">
+                                <span class="fa-solid fa-moon menu-item-icon fa-lg"></span>
+                                <span class="ps-1 menu-item-title">Dark</span>
+                            </div>
+                        </TextTemplate>
+                    </DxMenuItem>
+                </Items>
+            </DxMenuItem>
+            <DxMenuItem CssClass="notoggle" Position="ItemPosition.End">
+                <TextTemplate>
+                    <img height="50" class="rounded-circle" src="images/avatar.png" />
+                </TextTemplate>
+                <SubMenuTemplate>
+                    <div class="w-100">
+                        <div class="flex-column align-items-center justify-content-center p-3">
+                            <div class="logo-container d-flex align-items-center justify-content-center">
+                                <img height="50" class="rounded-circle" src="images/avatar.png" />
+                            </div>
+                            <div class="user-name-container bm-3 m-2">
+                                <h6 class="text-center">Welcome!</h6>
+                                <h6 class="text-center">John Heart</h6>
+                            </div>
+                            <div class="d-flex justify-content-center log-off-btn">
+                                <DxButton Text="Log Off" RenderStyle="@ButtonRenderStyle.Secondary" NavigateUrl="/login"></DxButton>
+                            </div>
+                        </div>
+                    </div>
+                </SubMenuTemplate>
+            </DxMenuItem>
+        </Items>
+    </DxMenu>
+</header>
+@code {
+    private async Task ToggleDrawer()
+    {
+        await JSRuntime.InvokeVoidAsync("toggleDrawer", "drawer");
+    }
+    private void ToggleTheme(bool theme)
+    {
+        Theme = theme;
+    }
+    private bool Theme { get; set; } = true;
+}

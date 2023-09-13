@@ -1,0 +1,130 @@
+﻿@page "/product/{Id?}"
+@using QuickTie.Data.Models
+@using QuickTie.Portal.Pages.Product.ProductDetail.ProductTypes
+@using QuickTie.Portal.Pages.Product.ProductDetail.Components
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+
+@inject NavigationManager NavManager
+@inject IProduct _productService
+@inject ICartService _cartService
+@inject IJSRuntime JSRuntime
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <div class="d-flex image-container justify-content-center pb-3">
+                @if (product == null)
+                {
+                    <div class="placeholder-glow w-100 px-5">
+                        <div class="placeholder"></div>
+                    </div>
+                } else
+                {
+                   <ImageView images="@product.Images" />
+                }
+            </div>
+        </div>
+        <div class="col-md-6 col-12 px-3">
+            @if (product == null)
+            {
+                <div class="placeholder-glow">
+                    <h2 class="placeholder col-7"></h2>
+                    <h6 class="placeholder col-12"></h6>
+                    <h6 class="placeholder col-12 mb-5"></h6>
+                    <h6 class="placeholder col-4"></h6>
+                    <p class="placeholder col-10 mb-3"></p>
+                    <h6 class="placeholder col-4"></h6>
+                    <p class="placeholder col-10 mb-3"></p>
+                    <h6 class="placeholder col-4"></h6>
+                    <p class="placeholder col-10 mb-3"></p>
+                    <h6 class="placeholder col-4"></h6>
+                    <p class="placeholder col-10 mb-3"></p>
+                </div>
+            } else
+            {
+                <div class="basic-info mb-5">
+                    <div class="d-flex align-items-center">
+                        <h2 class="fw-bold pe-5">@product.Name</h2>
+                        <span class="product-badge">@product.ProductType</span>
+                    </div>
+                    <h6>@product.Description</h6>
+                </div>
+                <div class="unique-info">
+                    @switch(product){
+                        case Hanger hangerProduct:
+                        <Hangers item="@hangerProduct" />
+                        break;
+
+                        case PlywoodClip clipProduct:
+                        <Clips item="@clipProduct" />
+                        break;
+
+                        case Strap strapProduct:
+                        <CoilStrappings item="@strapProduct" />
+                        break;
+
+                        case QuickTieCable cableProduct:
+                        <QuickTieCables item="@cableProduct" />
+                        break;
+
+                        default:
+                        <p>Oops! Something went wrong. Please reload the page or try again later.</p>
+                        break;
+                    }
+                </div>
+
+                <div class="mt-4 pt-3 d-flex justify-content-end align-items-center border-top border-1">
+                    <DxButton RenderStyle="ButtonRenderStyle.None"
+                              Text="< Return to Home"
+                              CssClass="fw-bold me-auto"
+                              NavigateUrl="/" />
+                    <h4 class="pe-5 mb-0 product-price fw-bold">$@product.UnitCost</h4>
+                    <DxButton RenderStyle="ButtonRenderStyle.None" Text="Add to Cart" Click="() => AddToCart(product)" CssClass="text-uppercase px-3 py-2 btn-custom-1" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    Product product { get; set; } = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (String.IsNullOrEmpty(Id))
+        {
+            NavManager.NavigateTo("/");
+            return;
+        }
+
+        // Fetch the product data from the database.
+        await LoadProduct();
+    }
+
+    private async Task LoadProduct()
+    {
+        product = await _productService.GetProductByIdAsync(Id);
+        await Task.Delay(1000);
+
+        StateHasChanged();
+    }
+
+    private async Task AddToCart(Product item)
+    {
+        CartItem cartItem = new CartItem()
+            {
+                ItemId = item.Id,
+                ItemName = item.Name,
+                ImageURL = item.Images[0].Location,
+                Quantity = 1,
+                PricePerUnit = (decimal)item.UnitCost,
+                Type = item.ProductType.GetEnumDisplayName()
+            };
+        await _cartService.AddItemAsync(cartItem);
+        await JSRuntime.InvokeVoidAsync("toggleDrawer", "drawer");
+    }
+}

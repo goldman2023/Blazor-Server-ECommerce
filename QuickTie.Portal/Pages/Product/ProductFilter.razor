@@ -1,0 +1,155 @@
+﻿@using QuickTie.Data.Models
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+@inject IProduct _productService
+@inject IJSRuntime JsRuntime
+@implements IDisposable
+
+<DxAccordion @ref="@accordion" RootItemExpandButtonDisplayMode="AccordionExpandButtonDisplayMode.End" CssClass="product-filter">
+    <Items>
+        <DxAccordionItem Text="Product Type"  Expanded="true">
+            <HeaderTextTemplate> 
+                <p class="group-header fw-bold fs-6 mb-0">
+                    Product Type
+                </p>
+            </HeaderTextTemplate>
+            <ContentTemplate >
+                <div class="py-3">
+                    @foreach (var item in ProductTypeWithCounts.Keys)
+                    {
+                        <div class="d-flex justify-content-between align-items-center">
+                            <DxCheckBox Checked="@Checkboxes[item]"
+                                        CheckedChanged="@((bool value) => HandleCheckboxChanged(item, value))">
+                                @ProductTypeWithCounts[item].DisplayName
+                            </DxCheckBox>
+                            <span class="badge rounded-pill">
+                                @ProductTypeWithCounts[item].Count
+                            </span>
+                        </div>
+                    }
+                </div>
+            </ContentTemplate>
+        </DxAccordionItem>
+        <DxAccordionItem Text="Price Range" Expanded="true">
+            <HeaderTextTemplate>
+                <p class="group-header fw-bold fx-6 mb-0">
+                    Price Range
+                </p>
+            </HeaderTextTemplate>
+            <ContentTemplate>
+                <div class="py-3">
+                    <RangeSlider RangeId="productRangeSlider" 
+                                 Min=0 
+                                 Max=1000 
+                                 Start=@StartValue 
+                                 End=@EndValue 
+                                 Step=10 />
+                    <form class="row">
+                        <div class="col-6 mb-3">
+                            <label for="minInput" class="form-label">Min</label>
+                            <DxSpinEdit Value="@StartValue"
+                                        Id="priceStartValue"
+                                        BindValueMode="@BindValueMode"
+                                        InputDelay="@InputDelay"
+                                        ValueChanged="@((float start) => OnStartValueChanged(start))"
+                                        NullText="Type a start value..." />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="maxInput" class="form-label d-flex justify-content-end">Max</label>
+                            <DxSpinEdit Value="@EndValue"
+                                        Id="priceEndValue"
+                                        InputDelay="@InputDelay"
+                                        BindValueMode="@BindValueMode"
+                                        ValueChanged="@((float end) => OnEndValueChanged(end))"
+                                        NullText="Type a end value..."  />
+                        </div>
+                    </form>
+                </div>
+            </ContentTemplate>
+        </DxAccordionItem>
+    </Items>
+</DxAccordion>
+
+@code {
+    [Parameter]
+    public EventCallback<FilterParameter> OnFilter { get; set; }
+
+    [Parameter]
+    public Dictionary<ProductType, ProductTypeInfo> ProductTypeWithCounts { get; set; } = new Dictionary<ProductType, ProductTypeInfo>();
+
+    private FilterParameter FilterParameter = new FilterParameter();
+
+    DxAccordion? accordion;
+    float StartValue { get; set; } = 0;
+    float EndValue { get; set; } = 1000;
+    int? InputDelay { get; set; } = 500;
+
+    private DotNetObjectReference<ProductFilter>? objectReference;
+
+    Dictionary<ProductType, bool> Checkboxes { get; set; } = new Dictionary<ProductType, bool>();
+
+    BindValueMode BindValueMode { get; set; } = BindValueMode.OnDelayedInput;
+
+    protected override void OnInitialized()
+    {
+        foreach (var item in _productService.GetCategoryList())
+        {
+            Checkboxes[item] = true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objectReference = DotNetObjectReference.Create(this);
+            await JsRuntime.InvokeVoidAsync("initFilterReference", objectReference);
+        }
+    }
+
+    public List<ProductType> GetCheckedCategory()
+    {
+        return Checkboxes.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
+    }
+
+    [JSInvokable]
+    public void UpdateSpinEditValue(float startValue, float endValue)
+    {
+        FilterParameter.Start = StartValue = startValue;
+        FilterParameter.End = EndValue = endValue;
+        StateHasChanged();  // Refresh UI
+        UpdateFilter();
+    }
+
+    void OnStartValueChanged(float start)
+    {
+        FilterParameter.Start = StartValue = start;
+        UpdateFilter();
+    }
+
+    void OnEndValueChanged(float end)
+    {
+        FilterParameter.End = EndValue = end;
+        UpdateFilter();
+    }
+
+    private void HandleCheckboxChanged(ProductType item, bool newValue)
+    {
+        Checkboxes[item] = newValue;
+        FilterParameter.SelectedCategory = GetCheckedCategory();
+        UpdateFilter();
+    }
+
+    private async void UpdateFilter()
+    {
+        if (OnFilter.HasDelegate)
+        {
+            await OnFilter.InvokeAsync(FilterParameter);
+        }
+    }
+
+    public void Dispose()
+    {
+        objectReference?.Dispose();
+    }
+}

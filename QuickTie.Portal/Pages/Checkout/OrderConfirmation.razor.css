@@ -1,0 +1,22 @@
+﻿.confirm-icon {
+    font-size: 50px;
+}
+
+.order-number {
+    color: #009aa6;
+}
+
+.order-updates {
+    border: 1px solid #d9d9d9;
+    letter-spacing: .5px;
+}
+
+.previous-info {
+    border: 1px solid #d9d9d9;
+    font-size: 14px;
+    letter-spacing: .5px;
+}
+
+    .previous-info div:not(:last-child) {
+        border-bottom: 1px solid #d9d9d9;
+    }

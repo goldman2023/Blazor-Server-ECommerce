@@ -1,0 +1,23 @@
+﻿.search {
+    padding: 0.25rem;
+    position: relative;
+    min-width: 120px;
+}
+
+.search-btn {
+    background-color: #009aa6;
+    transition: 0.3s;
+    border: none;
+}
+
+    .search-btn:hover {
+        background-color: #848484;
+    }
+
+.search-btn span {
+    color: #fff;
+}
+
+.search .form-control {
+    font-size: 14px !important;
+}

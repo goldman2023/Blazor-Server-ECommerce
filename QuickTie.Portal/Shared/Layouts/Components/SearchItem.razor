@@ -1,0 +1,11 @@
+﻿<div class="search input-group">
+    <input type="text" class="form-control search-input p-2" placeholder="@Placeholder">
+    <button class="search-btn px-3" type="button">
+        <span class="oi oi-magnifying-glass"></span>
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public string Placeholder { get; set; } = "Find a product, number...";
+}

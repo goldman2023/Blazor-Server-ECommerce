@@ -1,0 +1,52 @@
+﻿@using QuickTie.Data.Models
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+
+@inject IJSRuntime JSRuntime
+@inject ICartService _cartService
+
+<div class="col-lg-4 col-md-6">
+    <div class="product-item mb-3">
+        <a href="/product/@productItem.Id" class="product-img">
+            <img src="@productItem.MainProductImage" alt="Product Image">
+        </a>
+        <div class="product-text-dt">
+            <p>
+                Available <span>@productItem.CartonQuantity (In Stock)</span>
+            </p>
+            <h4 class="mb-0">
+                <a href="/product/@productItem.Id" class="text-black">
+                    @((MarkupString)productItem.Name.HighlightText(searchText))
+                </a>
+            </h4>
+            <p class="py-1">
+                @((MarkupString) string.Join(",",productItem.ReferenceNumbers.Select(x=>x.Name)).HighlightText(searchText))
+            </p>
+
+            <DxButton CssClass="btn-custom-secondary-outline w-100" RenderStyle="ButtonRenderStyle.None" Click="() => AddToCart(productItem)">Add to cart</DxButton>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Product? productItem { get; set; }
+
+    [Parameter]
+    public string searchText { get; set; } = "";
+
+    private async Task AddToCart(Product item)
+    {
+        CartItem cartItem = new CartItem()
+        {
+            ItemId = item.Id,
+            ItemName = item.Name,
+            ImageURL = item.Images[0].Location,
+            Quantity = 1,
+            PricePerUnit = (decimal) item.UnitCost,
+            Type = item.ProductType.GetEnumDisplayName()
+        };
+        await _cartService.AddItemAsync(cartItem);
+        await JSRuntime.InvokeVoidAsync("toggleDrawer", "drawer");
+    }
+}

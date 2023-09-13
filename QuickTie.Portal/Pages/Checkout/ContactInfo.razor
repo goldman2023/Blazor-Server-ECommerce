@@ -1,0 +1,134 @@
+﻿@page "/checkout/contact-information"
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+
+@layout CheckoutLayout
+@inject NavigationManager NavManager
+@inject HttpClient Http
+
+<EditForm EditContext="editContext"
+          OnValidSubmit="@HandleValidSubmit"
+          Context="EditFormContext">
+    <DataAnnotationsValidator />
+    <DxFormLayout CssClass="w-100">
+        <DxFormLayoutGroup ColSpanMd="12" CssClass="contact">
+            <HeaderTemplate>
+                <div class="d-flex flex-row justify-content-between flex-wrap">
+                    <h5 class="fw-bold mb-0 me-2">Contact</h5>
+                    <p class="login mb-0">
+                        <span class="text-secondary">Already have an account?</span>
+                        <DxButton RenderStyle="ButtonRenderStyle.Link" CssClass="fw-bold text-decoration-underline text-black" Text="Log In" />
+                    </p>
+                </div>
+            </HeaderTemplate>
+            <Items>
+                <div class="p-0 w-100">
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Email" @bind-Value="EditFormData.Email" />
+                        <ValidationMessage For="@(() => EditFormData.Email)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                            <DxCheckBox CssClass="w-100" @bind-Checked="EditFormData.EmailOffers" LabelPosition="LabelPosition.Right">
+                            Email me with news and offers
+                        </DxCheckBox>
+                    </DxFormLayoutItem>
+                </div>
+            </Items>
+        </DxFormLayoutGroup>
+        <DxFormLayoutGroup ColSpanMd="12" CssClass="shipping-address">
+            <HeaderTemplate>
+                <div>
+                    <h5 class="fw-bold">
+                        Shipping address
+                    </h5>
+                </div>
+            </HeaderTemplate>
+            <Items>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatSelectBox Label="Country/region" @bind-Value="EditFormData.Country" Options="@GeographicData.Countries" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="6" CssClass="p-0 pe-md-1 d-block">
+                        <FloatTextBox Label="First name" @bind-Value="EditFormData.FirstName" />
+                        <ValidationMessage For="@(() => EditFormData.FirstName)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="6" CssClass="p-0 ps-md-1 d-block">
+                        <FloatTextBox Label="Last name" @bind-Value="EditFormData.LastName" />
+                        <ValidationMessage For="@(() => EditFormData.LastName)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Company (required for business addresses)" @bind-Value="EditFormData.Company" />
+                        <ValidationMessage For="@(() => EditFormData.Company)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Address" @bind-Value="EditFormData.Address" />
+                        <ValidationMessage For="@(() => EditFormData.Address)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Apartment, suite, etc. (optional)" @bind-Value="EditFormData.Apartment" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="4" CssClass="p-0 pe-md-1 d-block">
+                        <FloatTextBox Label="City" @bind-Value="EditFormData.City" />
+                        <ValidationMessage For="@(() => EditFormData.City)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="4" CssClass="p-0 d-block">
+                        <FloatSelectBox Label="State" @bind-Value="EditFormData.State" Options="@GeographicData.USStates" />
+                        <ValidationMessage For="@(() => EditFormData.State)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="4" CssClass="p-0 ps-md-1 d-block">
+                        <FloatTextBox Label="ZIP code" @bind-Value="EditFormData.ZipCode" />
+                        <ValidationMessage For="@(() => EditFormData.ZipCode)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Phone (optional)" @bind-Value="EditFormData.Phone" />
+                    </DxFormLayoutItem>
+            </Items>
+        </DxFormLayoutGroup>
+    </DxFormLayout>
+
+    <div class="d-flex justify-content-end mb-4">
+         <DxButton SubmitFormOnClick="true" RenderStyle="ButtonRenderStyle.None" Text="Continue to shipping" CssClass="text-uppercase px-3 py-2 btn-custom-1" />
+    </div>
+</EditForm>
+
+@code {
+    public ContactInfoForm EditFormData = new ContactInfoForm(){};
+    private EditContext? editContext;
+
+    protected override void OnInitialized()
+    {
+        editContext = new(EditFormData);
+        editContext.SetFieldCssClassProvider(new ValidationFieldClassProvider());
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PopulateStateFromIpInfo();
+    }
+
+    private async Task PopulateStateFromIpInfo()
+    {
+        var response = await Http.GetAsync("https://ipinfo.io/json");
+        if (response.IsSuccessStatusCode)
+        {
+            using var jsonResponse = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var root = jsonResponse.RootElement;
+
+            if (root.TryGetProperty("region", out var regionProperty))
+            {
+                string detectedState = regionProperty.GetString();
+                if (GeographicData.USStates.Contains(detectedState))
+                {
+                    EditFormData.State = detectedState;
+                }
+            }
+        }
+    }
+
+    void HandleValidSubmit()
+    {
+        //Handle contact information form data
+        NavManager.NavigateTo("/checkout/shipping-method");
+    }
+}

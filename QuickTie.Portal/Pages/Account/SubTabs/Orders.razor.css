@@ -1,0 +1,23 @@
+﻿.card-title {
+    text-align : center;
+    font-weight : 600;
+}
+
+.card-text {
+    font-size: 14px;
+    text-align: center;
+}
+
+.card-body {
+    padding : 30px 10px;
+}
+
+.order-items {
+    max-height: 200px;
+    overflow: auto;
+    font-size: 16px
+}
+
+.order-details div, .order-date {
+    font-size: 16px;
+}

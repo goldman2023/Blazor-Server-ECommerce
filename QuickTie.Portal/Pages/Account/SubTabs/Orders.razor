@@ -1,0 +1,297 @@
+﻿@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+@using QuickTie.Data.Models
+@using QuickTie.Data.Models.Enums
+@using QuickTie.Data.Attributes
+@using QuickTie.Data.Enums
+@using QuickTie.Portal.Pages.Account.SubTabs.Components
+
+@inject IOrder _orderService
+
+<div class="order-history d-flex flex-row justify-content-between align-content-center mt-2">
+    <div class="subtabs w-100">
+        <DxTabs ScrollMode="TabsScrollMode.NavButtons" 
+                TabsPosition="TabsPosition.Top"
+                RenderMode="TabsRenderMode.Default">
+            <DxTabPage>
+                <TabTemplate>
+                    <DxButton RenderStyle="ButtonRenderStyle.None"
+                              Text="All order"
+                              CssClass="tab-btn-custom-2" />
+                </TabTemplate>
+                <ChildContent>
+                    <div class="py-3">
+                        <DxGrid Data="@AllOrders"
+                                ShowFilterRow="true"
+                                EditorRenderMode="GridEditorRenderMode.Integrated"
+                                ShowSearchBox="true"
+                                CssClass="border-0 p-3"
+                                RowClick="ShowDetails"
+                                AllowSelectRowByClick="true"
+                                VirtualScrollingEnabled="true"
+                                FilterMenuButtonDisplayMode="GridFilterMenuButtonDisplayMode.Always">
+                            <Columns>
+                                <DxGridDataColumn FieldName="Number" Caption="#" Width="70px" MinWidth="70" />
+                                <DxGridDataColumn FieldName="Name" MinWidth="150" />
+                                <DxGridDataColumn FieldName="CreatedDate" MinWidth="130" DisplayFormat="d" />
+                                <DxGridDataColumn FieldName="ShipByDate" MinWidth="130" DisplayFormat="d" />
+                                <DxGridDataColumn FieldName="State" MinWidth="130" Caption="State" />
+                                <DxGridDataColumn FieldName="Status" MinWidth="130" Caption="Status">
+                                    <CellDisplayTemplate>
+                                        <span class="text-nowrap">@(((Enum)context.Value).GetEnumDisplayName())  </span>
+                                    </CellDisplayTemplate>
+                                </DxGridDataColumn>
+                                <DxGridDataColumn FieldName="TotalPrice" MinWidth="100" Caption="Total" DisplayFormat="c2" />
+                            </Columns>
+                            <SearchBoxTemplate>
+                                <div class="w-100 d-flex justify-content-between align-items-center">
+                                    <DxTextBox NullText="Search by order #, name.."
+                                               Text="@context.SearchText"
+                                               InputDelay="500"
+                                               TextExpression="@(() => @context.SearchText)"
+                                               CssClass="p-1 w-50"
+                                               BindValueMode="BindValueMode.OnDelayedInput"
+                                               TextChanged="(string? v) => context.SearchText = v?.ToString()"
+                                               ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto">
+                                        <Buttons>
+                                            <DxEditorButton IconCssClass="oi oi-magnifying-glass" />
+                                        </Buttons>
+                                    </DxTextBox>
+                                    <div>
+                                        <DxButton RenderStyle="ButtonRenderStyle.None" IconCssClass="fa-solid fa-download" CssClass="btn-custom-primary px-3" Text="PDF"></DxButton>
+                                    </div>
+                                </div>
+                            </SearchBoxTemplate>
+                        </DxGrid>
+                    </div>
+                </ChildContent>
+            </DxTabPage>
+            <DxTabPage>
+                <TabTemplate>
+                    <DxButton RenderStyle="ButtonRenderStyle.None"
+                              Text="Summary"
+                              CssClass="tab-btn-custom-2" />
+                </TabTemplate>
+                <ChildContent>
+                    <div class="p-4">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">11</h5>
+                                        <p class="card-text">Total Orders Placed</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">6</h5>
+                                        <p class="card-text">Total Orders Completed</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">2</h5>
+                                        <p class="card-text">Total Orders Pending</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">3</h5>
+                                        <p class="card-text">Total Orders Cancelled</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ChildContent>
+            </DxTabPage>
+            <DxTabPage>
+                <TabTemplate>
+                    <DxButton RenderStyle="ButtonRenderStyle.None"
+                              Text="Completed"
+                              CssClass="tab-btn-custom-2" />
+                </TabTemplate>
+                <ChildContent>
+                    <div class="py-3">
+                        <DxGrid Data="@AllOrders"
+                                ShowFilterRow="true"
+                                EditorRenderMode="GridEditorRenderMode.Integrated"
+                                ShowSearchBox="true"
+                                CssClass="border-0 p-3"
+                                RowClick="ShowDetails"
+                                AllowSelectRowByClick="true"
+                                VirtualScrollingEnabled="true"
+                                FilterMenuButtonDisplayMode="GridFilterMenuButtonDisplayMode.Always">
+                            <Columns>
+                                <DxGridDataColumn FieldName="Number" Caption="#" Width="70px" MinWidth="70" />
+                                <DxGridDataColumn FieldName="Name" MinWidth="150" />
+                                <DxGridDataColumn FieldName="CreatedDate" MinWidth="130" DisplayFormat="d" />
+                                <DxGridDataColumn FieldName="ShipByDate" MinWidth="130" DisplayFormat="d" />
+                                <DxGridDataColumn FieldName="State" MinWidth="130" Caption="State" />
+                                <DxGridDataColumn FieldName="Status" MinWidth="130" Caption="Status">
+                                    <CellDisplayTemplate>
+                                        <span class="text-nowrap">@(((Enum)context.Value).GetEnumDisplayName())  </span>
+                                    </CellDisplayTemplate>
+                                </DxGridDataColumn>
+                                <DxGridDataColumn FieldName="TotalPrice" MinWidth="100" Caption="Total" DisplayFormat="c2" />
+                            </Columns>
+                            <SearchBoxTemplate>
+                                <div class="w-100 d-flex justify-content-between align-items-center">
+                                    <DxTextBox NullText="Search by order #, name.."
+                                               Text="@context.SearchText"
+                                               InputDelay="500"
+                                               TextExpression="@(() => @context.SearchText)"
+                                               CssClass="p-1 w-50"
+                                               BindValueMode="BindValueMode.OnDelayedInput"
+                                               TextChanged="(string? v) => context.SearchText = v?.ToString()"
+                                               ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto">
+                                        <Buttons>
+                                            <DxEditorButton IconCssClass="oi oi-magnifying-glass" />
+                                        </Buttons>
+                                    </DxTextBox>
+                                    <div>
+                                        <DxButton RenderStyle="ButtonRenderStyle.None" IconCssClass="fa-solid fa-download" CssClass="btn-custom-primary px-3" Text="PDF"></DxButton>
+                                    </div>
+                                </div>
+                            </SearchBoxTemplate>
+                        </DxGrid>
+                    </div>
+                </ChildContent>
+            </DxTabPage>
+            <DxTabPage>
+                <TabTemplate>
+                    <DxButton RenderStyle="ButtonRenderStyle.None"
+                              Text="Cancelled"
+                              CssClass="tab-btn-custom-2" />
+                </TabTemplate>
+                <ChildContent>
+                    <div class="py-3">
+                        <DxGrid Data="@AllOrders"
+                                ShowFilterRow="true"
+                                EditorRenderMode="GridEditorRenderMode.Integrated"
+                                ShowSearchBox="true"
+                                CssClass="border-0 p-3"
+                                RowClick="ShowDetails"
+                                AllowSelectRowByClick="true"
+                                VirtualScrollingEnabled="true"
+                                FilterMenuButtonDisplayMode="GridFilterMenuButtonDisplayMode.Always">
+                            <Columns>
+                                <DxGridDataColumn FieldName="Number" Caption="#" Width="70px" MinWidth="70" />
+                                <DxGridDataColumn FieldName="Name" MinWidth="150" />
+                                <DxGridDataColumn FieldName="CreatedDate" MinWidth="130" DisplayFormat="d" />
+                                <DxGridDataColumn FieldName="ShipByDate" MinWidth="130" DisplayFormat="d" />
+                                <DxGridDataColumn FieldName="State" MinWidth="130" Caption="State" />
+                                <DxGridDataColumn FieldName="Status" MinWidth="130" Caption="Status">
+                                    <CellDisplayTemplate>
+                                        <span class="text-nowrap">@(((Enum)context.Value).GetEnumDisplayName())  </span>
+                                    </CellDisplayTemplate>
+                                </DxGridDataColumn>
+                                <DxGridDataColumn FieldName="TotalPrice" MinWidth="100" Caption="Total" DisplayFormat="c2" />
+                            </Columns>
+                            <SearchBoxTemplate>
+                                <div class="w-100 d-flex justify-content-between align-items-center">
+                                    <DxTextBox NullText="Search by order #, name.."
+                                               Text="@context.SearchText"
+                                               InputDelay="500"
+                                               TextExpression="@(() => @context.SearchText)"
+                                               CssClass="p-1 w-50"
+                                               BindValueMode="BindValueMode.OnDelayedInput"
+                                               TextChanged="(string? v) => context.SearchText = v?.ToString()"
+                                               ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto">
+                                        <Buttons>
+                                            <DxEditorButton IconCssClass="oi oi-magnifying-glass" />
+                                        </Buttons>
+                                    </DxTextBox>
+                                    <div>
+                                        <DxButton RenderStyle="ButtonRenderStyle.None" IconCssClass="fa-solid fa-download" CssClass="btn-custom-primary px-3" Text="PDF"></DxButton>
+                                    </div>
+                                </div>
+                            </SearchBoxTemplate>
+                        </DxGrid>
+                    </div>
+                </ChildContent>
+            </DxTabPage>
+        </DxTabs>
+    <DxPopup
+        @bind-Visible="@PopupVisible"
+        ShowFooter="true"
+        Scrollable="true"
+        BodyCssClass="p-0"
+       >
+       <HeaderTemplate>
+                <h5 class="p-3 border-bottom border-2 fw-bold">
+                    @SelectedOrder?.Name
+                </h5>
+       </HeaderTemplate>
+        <BodyContentTemplate>
+            <div>
+                <div class="order-date px-3 py-2">
+                    <i class="fa-regular fa-clock text-secondary pe-2"></i>
+                    Order created on @SelectedOrder?.CreatedDate.ToString("MM/dd/yyyy")
+                </div>
+                <div class="py-2">
+                    <p class="text-secondary py-2 mx-3 mb-1 border-top border-1">Item details</p>
+                    <div class="order-items px-3">
+                        @if(SelectedOrder != null)
+                        {
+                            @foreach(var item in SelectedOrder.Products)
+                            {
+                                <OrderDetail OrderItem="@item" />
+                            }       
+                        }
+                    </div>
+                </div>
+                <div class="order-details px-3">
+                    <p class="text-secondary pt-2 pb-1 mb-0 border-top border-1">Order details</p>
+                    <div class="d-flex justify-content-between">
+                        <p>Order Number</p>
+                        <p>#@SelectedOrder?.Number</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p>Ship By Date</p>
+                        <p>@SelectedOrder?.ShipByDate.ToString("MM/dd/yyyy")</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p>Total Price</p>
+                        <p>$@SelectedOrder?.TotalPrice</p>
+                    </div>
+                </div>
+            </div>
+        </BodyContentTemplate>
+        <FooterTemplate>
+            <div class="p-2 border-top border-2 d-flex justify-content-end">
+                <DxButton CssClass="btn-custom-primary" RenderStyle="ButtonRenderStyle.Primary" Text="OK" Click="@(() => SelectedOrder = null)" />
+            </div>
+        </FooterTemplate>
+    </DxPopup>
+
+    </div>
+</div>
+
+@code {
+    IEnumerable<Order> AllOrders { get; set; }
+    Order SelectedOrder { get; set; }
+
+    bool PopupVisible
+    {
+        get { return SelectedOrder != null; }
+        set { if (!value) SelectedOrder = null; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllOrders = await _orderService.GetOrdersAsync(0, 0);
+    }
+    public string Alert { get; set; } = "";
+    public void ShowDetails(GridRowClickEventArgs e)
+    {
+        string alert = e.Column.Caption;
+        SelectedOrder = e.Grid.GetDataItem(e.VisibleIndex) as Order;
+    }
+}

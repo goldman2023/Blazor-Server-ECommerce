@@ -1,0 +1,40 @@
+﻿@using QuickTie.Data.Models
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="custCarousel" class="carousel slide" data-ride="carousel" align="center">
+                <!-- slides -->
+                <div class="carousel-inner bg-light">
+                    @foreach(var item in images.Select((value, index) => (value, index)))
+                    {
+                        <div class="carousel-item p-5 @(item.index == 0 ? "active" : "")">
+                            <img src="@item.value.Location" alt="Product images">
+                        </div>
+                    }
+                    <a class="carousel-control-prev text-decoration-none" href="#custCarousel" data-bs-slide="prev">
+                        <span class="fa-solid fa-angle-left"></span>
+                    </a>
+                    <a class="carousel-control-next text-decoration-none" href="#custCarousel" data-bs-slide="next">
+                        <span class="fa-solid fa-angle-right"></span>
+                    </a>
+                </div>
+                <!-- Thumbnails -->
+                <ol class="carousel-indicators list-inline">
+                    @foreach (var item in images.Select((value, index) => (value, index)))
+                    {
+                        <li class="list-inline-item p-0 m-0 @(item.index == 0 ? "active":"")">
+                            <a id="carousel-selector-@item.index" class="@(item.index == 0 ? "selected":"")" data-bs-slide-to="@item.index" data-bs-target="#custCarousel">
+                                <img src="@item.value.Location" class="img-fluid">
+                            </a>
+                        </li>
+                    }
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public List<ProductImage> images { get; set; }
+}

@@ -1,0 +1,70 @@
+﻿@page "/"
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Pages.Product
+@using Microsoft.AspNetCore.Components.Web
+@using QuickTie.Data.Models
+
+@inject IProduct _productService
+
+
+<PageTitle>Category Products</PageTitle>
+
+<div class="py-5 bg-light">
+    <div class="container">
+        <h3 class="fw-bolder">Category Products</h3>
+    </div>
+</div>
+
+<div class="container pt-3">
+    <div class="row g-3">
+
+    <div class="col-lg-3 col-md-5 col-sm-6 col-xs-12">
+        <ProductFilter OnFilter="HandleFilterChanged" 
+                       ProductTypeWithCounts="@productTypeWithCounts" />
+    </div>
+    <div class="col-lg-9 col-md-7 col-sm-6 col-xs-12">
+        <ProductList FilterParameter="@FilterParameter"
+                     OnSearchValueChanged="HandleSearchValueChanged" />
+    </div>
+    </div>
+
+</div>
+@code {
+    string? SearchValue { get; set; }
+
+    IEnumerable<KeyValuePair<ProductType, long>> categoryProduct { get; set; }
+    Dictionary<ProductType, ProductTypeInfo> productTypeWithCounts = new Dictionary<ProductType, ProductTypeInfo>();
+
+    FilterParameter FilterParameter = new FilterParameter();
+
+    private void HandleSearchValueChanged(string search_value)
+    {
+        SearchValue = search_value;
+        HandleFilter();
+    }
+    private void HandlePageIndexChanged(int page_value)
+    {
+        HandleFilter();
+    }
+    private void HandleFilterChanged(FilterParameter filterParameter)
+    {
+        FilterParameter = filterParameter;
+        HandleFilter();
+    }
+
+    private async void HandleFilter()
+    {
+        await LoadProducts();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        categoryProduct = await _productService.GetCategoriesAsync(SearchValue, FilterParameter);
+        productTypeWithCounts = _productService.GetCategoryWithCount(categoryProduct);
+        StateHasChanged();
+    }
+}

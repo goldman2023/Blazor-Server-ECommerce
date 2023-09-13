@@ -1,0 +1,76 @@
+﻿@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+
+<div class="container">
+     <div class="row">
+        <div class="col-12 col-md-6 mx-auto">
+            <EditForm EditContext="editContext"
+                      OnValidSubmit="@HandleValidSubmit"
+                      Context="EditFormContext">
+                <DataAnnotationsValidator />
+                <DxFormLayout CssClass="w-100 mx-auto pt-4 pb-3">
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Email" @bind-Value="EditFormData.Email" />
+                        <ValidationMessage For="@(() => EditFormData.Email)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatSelectBox Label="Country/region" @bind-Value="EditFormData.Country" Options="@GeographicData.Countries" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="6" CssClass="p-0 pe-md-1 d-block">
+                        <FloatTextBox Label="First name" @bind-Value="EditFormData.FirstName" />
+                        <ValidationMessage For="@(() => EditFormData.FirstName)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="6" CssClass="p-0 ps-md-1 d-block">
+                        <FloatTextBox Label="Last name" @bind-Value="EditFormData.LastName" />
+                        <ValidationMessage For="@(() => EditFormData.LastName)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Company (required for business addresses)" @bind-Value="EditFormData.Company" />
+                        <ValidationMessage For="@(() => EditFormData.Company)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Address" @bind-Value="EditFormData.Address" />
+                        <ValidationMessage For="@(() => EditFormData.Address)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Apartment, suite, etc. (optional)" @bind-Value="EditFormData.Apartment" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="4" CssClass="p-0 pe-md-1 d-block">
+                        <FloatTextBox Label="City" @bind-Value="EditFormData.City" />
+                        <ValidationMessage For="@(() => EditFormData.City)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="4" CssClass="p-0 px-md-1 d-block">
+                        <FloatTextBox Label="State" @bind-Value="EditFormData.State" Options="@GeographicData.USStates" />
+                        <ValidationMessage For="@(() => EditFormData.State)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="4" CssClass="p-0 ps-md-1 d-block">
+                        <FloatTextBox Label="ZIP code" @bind-Value="EditFormData.ZipCode" />
+                        <ValidationMessage For="@(() => EditFormData.ZipCode)" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem ColSpanMd="12" CssClass="p-0">
+                        <FloatTextBox Label="Phone (optional)" @bind-Value="EditFormData.Phone" />
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+
+                <div class="d-flex justify-content-center mb-2">
+                    <DxButton SubmitFormOnClick="true" RenderStyle="ButtonRenderStyle.None" Text="Update" CssClass="text-uppercase px-3 py-2 btn-custom-1" />
+                </div>
+            </EditForm>
+        </div>
+     </div>
+</div>
+@code {
+    public ContactInfoForm EditFormData = new ContactInfoForm() { };
+    private EditContext? editContext;
+
+    protected override void OnInitialized()
+    {
+        editContext = new(EditFormData);
+        editContext.SetFieldCssClassProvider(new ValidationFieldClassProvider());
+    }
+
+    void HandleValidSubmit()
+    {
+        //Handle contact information form data
+    }
+}

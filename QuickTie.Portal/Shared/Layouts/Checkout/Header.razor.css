@@ -1,0 +1,17 @@
+﻿.menu-item-icon {
+    color: #009aa6;
+    display: block;
+    padding: 15px;
+    text-align: center;
+}
+
+.menu-item-title {
+    color: #009aa6;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+header {
+    border-bottom: 1px solid #dee2e6;
+}

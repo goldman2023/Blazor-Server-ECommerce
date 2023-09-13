@@ -1,0 +1,56 @@
+﻿@using QuickTie.Data.Models
+
+<div class="mb-3">
+    <h6 class="fw-bold">Manufacturer</h6>
+    <span>@item.Manufacturer</span>
+</div>
+
+<div class="mb-3">
+    <h6 class="fw-bold">Measurements</h6>
+    <div class="d-flex flex-wrap">
+        <span class="col-6">
+            <span class="text-secondary pe-3">Width:</span>@item.Width
+        </span>
+        <span class="col-6">
+            <span class="text-secondary pe-3">Length:</span>@item.Length
+        </span>
+        <span class="col-6">
+            <span class="text-secondary pe-3">Weight:</span>@item.Weight
+        </span>
+        <span class="col-6">
+            <span class="text-secondary pe-3">Thickness:</span>@item.Thickness
+        </span>
+        <span class="col-6">
+            <span class="text-secondary pe-3">Gauge:</span>@item.Gauge
+        </span>
+    </div>
+</div>
+
+<div class="mb-3">
+    <h6 class="fw-bold">Coating</h6>
+    <div class="d-flex flex-wrap">
+        <span class="col-6">
+            @item.Coating
+        </span>
+    </div>
+</div>
+
+<div class="mb-3">
+    <h6 class="fw-bold">References</h6>
+    <div class="d-flex flex-wrap">
+        @if (item.ReferenceNumbers.Any())
+        {
+            @string.Join(", ", item.ReferenceNumbers.Select(x => x.Name))
+        }
+        else
+        {
+            <span class="text-secondary">Not Available</span>
+        }
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public Strap item { get; set; }
+}

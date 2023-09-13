@@ -1,0 +1,26 @@
+﻿@using QuickTie.Portal.Models
+
+<div class="cart-line-item d-flex justify-content-between py-2">
+    <div class="d-flex align-items-center">
+        <div class="item-image-container me-2 bg-white position-relative border border-2">
+            <img src="@Item.ImageURL" class="w-100 h-100" alt="Product Image" />
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-secondary">
+                @Item.Quantity
+                <span class="visually-hidden">item quantity</span>
+            </span>
+        </div>
+        <div class="position-relative">
+            <div class="item-info">
+                <p class="fw-normal mb-0">@Item.ItemName</p>
+                <p class="fw-lighter text-secondary mb-0">@Item.Type</p>
+            </div>
+        </div>
+    </div>
+    <div class="item-subtotal d-flex flex-column justify-content-center align-items-end">
+        <p class="mb-0">$@Item.TotalPrice</p>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public CartItem Item { get; set; }
+}

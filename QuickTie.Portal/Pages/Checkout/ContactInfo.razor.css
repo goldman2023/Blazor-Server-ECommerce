@@ -1,0 +1,27 @@
+﻿.express-checkout legend {
+    font-size : 12px;
+}
+.separator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    line-height: 1.4;
+    text-align: center;
+    text-transform: uppercase;
+    color: #737373;
+}
+.separator::before, .separator::after {
+    content: '';
+    display: inline-block;
+    height: 2px;
+    background-color: #e6e6e6;
+    flex-grow: 1;
+}
+.separator-content {
+    font-size: 12px;
+    letter-spacing: .5px;
+    font-weight : 400;
+}
+.contact .login {
+    font-size: 14px;
+}

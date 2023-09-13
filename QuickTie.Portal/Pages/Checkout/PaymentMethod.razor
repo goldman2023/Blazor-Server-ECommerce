@@ -1,0 +1,289 @@
+﻿@page "/checkout/payment-method"
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+@layout CheckoutLayout
+@inject NavigationManager NavManager
+
+<div class="previous-info p-3 mt-2">
+    <div class="d-flex flex-row justify-content-between pb-3">
+        <p class="mb-0 text-secondary">Contact</p>
+        <p class="mb-0 w-75 text-start ps-3">Example@example.com</p>
+        <DxButton RenderStyle="ButtonRenderStyle.None" Text="Change" CssClass="fw-bold p-0" NavigateUrl="/checkout/contact-information" />
+    </div>
+    <div class="d-flex flex-row justify-content-between py-3">
+        <p class="mb-0 text-nowrap text-secondary">Ship to</p>
+        <p class="mb-0 w-75 text-start ps-3">Temp, 123th St, Torrance CA 90501, United States</p>
+        <DxButton RenderStyle="ButtonRenderStyle.None" Text="Change" CssClass="fw-bold p-0" NavigateUrl="/checkout/contact-information" />
+    </div>
+    <div class="d-flex flex-row justify-content-between pt-3">
+        <p class="mb-0 text-secondary">Method</p>
+        <p class="mb-0 w-75 text-start ps-3">Faster Shipping (Delivered in 2 Business Days if Ordered by 12:30pm EST) · $16.00</p>
+        <DxButton RenderStyle="ButtonRenderStyle.None" Text="Change" CssClass="fw-bold p-0" NavigateUrl="/checkout/shipping-method" />
+    </div>
+</div>
+
+<div class="mt-5">
+    <h5 class="fw-bold">Payment</h5>
+    <p class="mb-3 text-secondary">All transactions are secure and encrypted.</p>
+    <fieldset class="payment-method">
+        <DxAccordion ExpandMode="AccordionExpandMode.Single"
+                     ExpandCollapseAction="AccordionExpandCollapseAction.HeaderClick"
+                     RootItemExpandButtonDisplayMode="AccordionExpandButtonDisplayMode.None"
+                     ItemClick=@HandlePaymentSelect
+                     AnimationType="LayoutAnimationType.Slide">
+            <Items>
+                <DxAccordionItem Text="@PaymentMethods.CreditCard">
+                    <HeaderTextTemplate>
+                        <DxRadio GroupName="payment-method-group"
+                        @bind-GroupValue="@SelectedMethod"
+                                 Value="@context.Text"
+                                 CssClass="w-100">
+                            <ChildContent>
+                                <div class="mb-0 d-flex justify-content-between align-items-center shipping-method-item">
+                                    <p class="mb-0">@context.Text</p>
+                                    <div class="position-absolute end-0 d-flex align-items-center">
+                                        <img height="40" src="https://img.icons8.com/ios/50/visa.png" alt="visa" />
+                                        <img height="40" src="https://img.icons8.com/cotton/50/mastercard.png" alt="mastercard" />
+                                        <img height="40" src="https://img.icons8.com/color/50/amex.png" alt="amex" />
+                                        <img height="40" src="https://img.icons8.com/color/50/discover.png" alt="discover" />
+                                        <span class="ps-2 pe-3 text-secondary">and more...</span>
+                                    </div>
+                                </div>
+                            </ChildContent>
+                        </DxRadio>
+                    </HeaderTextTemplate>
+                    <ContentTemplate Context="CreditCard">
+                        <div class="p-3 payment-group-content">
+                            <EditForm EditContext="CreditFormContext"
+                                      Context="CreditFormContext">
+                                <DataAnnotationsValidator />
+                                <DxFormLayout CssClass="w-100">
+                                    <DxFormLayoutItem ColSpanMd="12" CssClass="d-block">
+                                        <FloatTextBox Label="Card number" @bind-Value="CreditFormData.CardNumber" Mask="0000 0000 0000 0000" />
+                                        <ValidationMessage For="@(() => CreditFormData.CardNumber)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="12" CssClass="d-block">
+                                        <FloatTextBox Label="Name on card" @bind-Value="CreditFormData.NameOnCard" />
+                                        <ValidationMessage For="@(() => CreditFormData.NameOnCard)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="6" CssClass="d-block">
+                                        <FloatTextBox Label="Expiration date (MM/YY)" @bind-Value="CreditFormData.ExpirationDate" Mask="00/0000" />
+                                        <ValidationMessage For="@(() => CreditFormData.ExpirationDate)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="6" CssClass="d-block">
+                                        <FloatTextBox Label="Security code" @bind-Value="CreditFormData.SecurityCode" Mask="0000"/>
+                                        <ValidationMessage For="@(() => CreditFormData.SecurityCode)" />
+                                    </DxFormLayoutItem>
+                                </DxFormLayout>
+                            </EditForm>
+                        </div>
+                    </ContentTemplate>
+                </DxAccordionItem>
+                <DxAccordionItem Text="@PaymentMethods.PO">
+                    <HeaderTextTemplate>
+                        <DxRadio GroupName="payment-method-group"
+                        @bind-GroupValue="@SelectedMethod"
+                                 Value="@context.Text"
+                                 CssClass="w-100">
+                            @context.Text
+                        </DxRadio>
+                    </HeaderTextTemplate>
+                    <ContentTemplate Context="PO">
+                        <div class="p-3 payment-group-content">
+                            <EditForm EditContext="POFormContext"
+                                      Context="POFormContext">
+                                <DataAnnotationsValidator />
+                                <DxFormLayout CssClass="w-100">
+                                    <DxFormLayoutItem ColSpanMd="12">
+                                        <FloatTextBox Label="PO number" @bind-Value="POFormData.PONumber" />
+                                        <ValidationMessage For="@(() => POFormData.PONumber)" />
+                                    </DxFormLayoutItem>
+                                </DxFormLayout>
+                            </EditForm>
+                        </div>
+                    </ContentTemplate>
+                </DxAccordionItem>
+            </Items>
+        </DxAccordion>
+    </fieldset>
+</div>
+
+<div class="mt-5">
+    <h5 class="fw-bold">
+        Billing address
+    </h5>
+    <p class="mb-3 text-secondary">
+        Select the address that matches your card or payment method.
+    </p>
+    <fieldset class="billing-address">
+        <DxAccordion ExpandMode="AccordionExpandMode.Single"
+                     ExpandCollapseAction="AccordionExpandCollapseAction.HeaderClick"
+                     RootItemExpandButtonDisplayMode="AccordionExpandButtonDisplayMode.None"
+                     ItemClick=@HandleAddressSelect
+                     AnimationType="LayoutAnimationType.Slide">
+            <Items>
+                <DxAccordionItem Text="@BillingAddress.SameAsShipping">
+                    <HeaderTextTemplate>
+                        <DxRadio GroupName="billing-address-group"
+                        @bind-GroupValue="@SelectedAddress"
+                                 Value="@context.Text"
+                                 CssClass="w-100">
+                            @context.Text
+                        </DxRadio>
+                    </HeaderTextTemplate>
+                    <ContentTemplate></ContentTemplate>
+                </DxAccordionItem>
+                <DxAccordionItem Text="@BillingAddress.DifferentAddress">
+                    <HeaderTextTemplate>
+                        <DxRadio GroupName="billing-address-group"
+                        @bind-GroupValue="@SelectedAddress"
+                                 Value="@context.Text"
+                                 CssClass="w-100 align-items-center">
+                            @context.Text
+                        </DxRadio>
+                    </HeaderTextTemplate>
+                    <ContentTemplate Context="form">
+                        <div class="p-3 payment-group-content">
+                            <EditForm EditContext="BillingFormContext"
+                                      Context="FormContext">
+                                <DataAnnotationsValidator />
+                                <DxFormLayout CssClass="w-100">
+                                    <DxFormLayoutItem ColSpanMd="12">
+                                        <FloatSelectBox Label="Country/region" @bind-Value="BillingFormData.Country" Options="@GeographicData.Countries" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="6" CssClass="d-block">
+                                        <FloatTextBox Label="First name" @bind-Value="BillingFormData.FirstName" />
+                                        <ValidationMessage For="@(() => BillingFormData.FirstName)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="6" CssClass="d-block">
+                                        <FloatTextBox Label="Last name" @bind-Value="BillingFormData.LastName" />
+                                        <ValidationMessage For="@(() => BillingFormData.LastName)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="12">
+                                        <FloatTextBox Label="Company (required for business addresses)" @bind-Value="BillingFormData.Company" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="12">
+                                        <FloatTextBox Label="Address" @bind-Value="BillingFormData.Address" />
+                                        <ValidationMessage For="@(() => BillingFormData.Address)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="12">
+                                        <FloatTextBox Label="Apartment, suite, etc. (optional)" @bind-Value="BillingFormData.Apartment" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="4" CssClass="d-block">
+                                        <FloatTextBox Label="City" @bind-Value="BillingFormData.City" />
+                                        <ValidationMessage For="@(() => BillingFormData.City)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="4" CssClass="d-block">
+                                        <FloatSelectBox Label="State" @bind-Value="BillingFormData.State" Options="@GeographicData.USStates" />
+                                        <ValidationMessage For="@(() => BillingFormData.State)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="4" CssClass="d-block">
+                                        <FloatTextBox Label="ZIP code" @bind-Value="BillingFormData.ZipCode" />
+                                        <ValidationMessage For="@(() => BillingFormData.ZipCode)" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="12">
+                                        <FloatTextBox Label="Phone (optional)" @bind-Value="BillingFormData.Phone" />
+                                    </DxFormLayoutItem>
+                                </DxFormLayout>
+                            </EditForm>
+                        </div>
+                    </ContentTemplate>
+                </DxAccordionItem>
+            </Items>
+        </DxAccordion>
+    </fieldset>
+</div>
+
+<div class="d-flex justify-content-between mt-4 mb-4">
+    <DxButton RenderStyle="ButtonRenderStyle.None" 
+              Text="< Return to shipping" 
+              CssClass="fw-bold" 
+              NavigateUrl="/checkout/shipping-method" />
+    <DxButton RenderStyle="ButtonRenderStyle.None"
+              Text="Complete Order" 
+              CssClass="text-uppercase px-3 py-2 btn-custom-1" 
+              Enabled="!isSending"
+              Click="HandleSubmit">
+        <div class="d-flex">
+            <DxWaitIndicator Visible="isSending"/>
+            <span class="mx-2">@Message</span>
+        </div>
+    </DxButton>
+</div>
+
+<div class="mb-4">
+    <p>By placing this order, you agree to our <span class="fw-bold text-decoration-underline">Terms of Service</span> and understand our <span class="fw-bold text-decoration-underline">Privacy Policy</span>.</p>
+</div>
+
+@code {
+    public string? SelectedMethod { get; set; }
+    public string? SelectedAddress { get; set; }
+    public PaymentMethods? PaymentMethods { get; set; }
+    public BillingAddressOptions? BillingAddress { get; set; }
+
+    private EditContext? CreditFormContext;
+    private EditContext? BillingFormContext;
+    private EditContext? POFormContext;
+
+    public ContactInfoForm BillingFormData = new ContactInfoForm() { };
+    public CreditCardForm CreditFormData = new CreditCardForm() { };
+    public POForm POFormData = new POForm() { };
+
+    bool isSending = false;
+    string Message => isSending ? "Submitting..." : "Complete Order";
+
+    protected override void OnInitialized()
+    {
+        PaymentMethods = new PaymentMethods();
+        BillingAddress = new BillingAddressOptions();
+
+        CreditFormContext = new(CreditFormData);
+        BillingFormContext = new(BillingFormData);
+        POFormContext = new(POFormData);
+        CreditFormContext.SetFieldCssClassProvider(new ValidationFieldClassProvider());
+        BillingFormContext.SetFieldCssClassProvider(new ValidationFieldClassProvider());
+        POFormContext.SetFieldCssClassProvider(new ValidationFieldClassProvider());
+
+        SelectedMethod = PaymentMethods.CreditCard;
+        SelectedAddress = BillingAddress.SameAsShipping;
+    }
+
+    void HandlePaymentSelect(AccordionItemClickEventArgs args)
+    {
+        SelectedMethod = args.ItemInfo.Text;
+    }
+    void HandleAddressSelect(AccordionItemClickEventArgs args)
+    {
+        SelectedAddress = args.ItemInfo.Text;
+    }
+
+    private async Task HandleSubmit()
+    {
+        // Handle Payment Method and Billing Address form data
+
+        bool isPaymentValid = true;
+        bool isBillingValid = true;
+
+        if (SelectedMethod == PaymentMethods.CreditCard)
+        {
+            isPaymentValid = CreditFormContext.Validate();
+        }
+        if (SelectedMethod == PaymentMethods.PO)
+        {
+            isPaymentValid = POFormContext.Validate();
+        }
+        if (SelectedAddress == BillingAddress.DifferentAddress)
+        {
+            isBillingValid = BillingFormContext.Validate();
+        }
+        if (isPaymentValid && isBillingValid)
+        {
+            //Process form data
+            isSending = true;
+            await Task.Delay(2000);
+            isSending = false;
+
+            NavManager.NavigateTo("/checkout/order-confirmation");
+        }
+    }
+}

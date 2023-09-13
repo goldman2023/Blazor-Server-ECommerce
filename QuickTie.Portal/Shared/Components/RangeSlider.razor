@@ -1,0 +1,31 @@
+@inject IJSRuntime JsRuntime
+
+<div id="@RangeId"></div>
+
+@code {
+    [Parameter]
+    public string RangeId { get; set; }
+
+    [Parameter]
+    public float Min { get; set; }
+
+    [Parameter]
+    public float Max { get; set; }
+
+    [Parameter]
+    public float Start { get; set; }
+
+    [Parameter]
+    public float End { get; set; }
+
+    [Parameter]
+    public float Step { get; set; }
+
+    [Parameter]
+    public bool IsToolTipEnabled { get; set; } = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JsRuntime.InvokeVoidAsync("initializeRangeSlider", RangeId, Min, Max, Start, End, Step, IsToolTipEnabled);
+    }
+}

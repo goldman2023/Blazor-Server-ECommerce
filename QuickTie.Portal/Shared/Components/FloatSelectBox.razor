@@ -1,0 +1,19 @@
+﻿@inherits InputSelect<string>
+
+<div class="form-floating">
+    <select @attributes="AdditionalAttributes" @bind="CurrentValueAsString" class="form-select @CssClass">
+        @foreach (var option in Options)
+        {
+            <option value="@option">@option</option>
+        }
+    </select>
+    <label class="text-secondary">@Label</label>
+</div>
+
+@code {
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public IEnumerable<string>? Options { get; set; }
+}

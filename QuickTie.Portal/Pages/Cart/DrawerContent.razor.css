@@ -1,0 +1,47 @@
+﻿#drawer-content {
+    width: 400px;
+    height: 100%;
+    background-color: #fff;
+}
+.cart-drawer-header {
+    font-size : 12px;
+    font-weight : 400;
+    letter-spacing : 0.5px;
+    position : relative;
+}
+    .cart-drawer-header .drawer-close{
+        position : absolute;
+        left: 0;
+        top : 5px;
+        font-size : 25px;
+    }
+    .cart-drawer-header .progress {
+        height: 5px;
+    }
+        .cart-drawer-header .progress .progress-bar {
+            background-color: #b8d1dc;
+        }
+
+.cart-drawer-body {
+    min-height : 250px;
+    height : 100%;
+    overflow : auto;
+    position : relative;
+}
+
+.cart-drawer-action {
+    letter-spacing: 0.5px;
+}
+
+    .cart-drawer-action > div:first-child {
+        padding-top : 10px;
+        border-top: 1px solid #d3d4d5;
+    }
+
+.btn-close {
+    transition: .2s;
+}
+
+    .btn-close:hover {
+        transform: rotate(90deg);
+    }

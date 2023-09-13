@@ -1,0 +1,43 @@
+# Visual Studio / Rider / ReSharper
+.vs/
+*.sln.iml
+*.suo
+*.user
+*.userprefs
+*.sln.DotSettings.user
+*.csproj.DotSettings.user
+*.DotSettings.user
+_ReSharper.*
+
+# Build results
+/QuickTie.Portal/bin/
+/QuickTie.Portal/obj/
+
+# NuGet Packages
+*.nuget.props
+*.nuget.targets
+/.nuget/
+
+# MSTest test Results
+TestResults/
+
+# Blazor WebAssembly
+/_framework/
+/wwwroot/dist/
+
+# Ignore custom configuration files
+appsettings.Development.json
+appsettings.Production.json
+
+# Ignore Visual Studio Code specific files
+.vscode/
+
+# Ignore Mac specific files
+.DS_Store
+
+# Ignore Windows thumbnail cache files
+Thumbs.db
+
+# Ignore Node.js specific files
+node_modules/
+package-lock.json

@@ -1,0 +1,15 @@
+﻿@using QuickTie.Portal.Pages.Cart
+@inject IJSRuntime JsRuntime
+
+<div id="drawer" class="position-fixed top-0 end-0 invisible"></div>
+
+<DrawerContent />
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+            await JsRuntime.InvokeVoidAsync("initializeDrawer", "drawer");
+    }
+}

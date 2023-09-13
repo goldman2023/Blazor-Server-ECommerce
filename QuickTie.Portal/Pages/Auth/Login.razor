@@ -1,0 +1,65 @@
+﻿@page "/login"
+@layout AuthLayout
+
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager NavManager
+
+<EditForm EditContext="@loginContext"
+        OnValidSubmit="@HandleValidSubmit"
+        Context="EditFormContext">
+    <DataAnnotationsValidator />
+    <div class="card-header text-center py-3 px-5 bg-white border-0">
+        <DxButton Context="logo" RenderStyle="ButtonRenderStyle.None" CssClass="w-100 p-0" NavigateUrl="/">
+            <img height="80" src="images/logo.png" />
+        </DxButton>
+    </div>
+    <div class="card-body">
+        <DxFormLayout CssClass="w-100 mb-3">
+            <DxFormLayoutItem ColSpanMd="12" CssClass="d-block">
+                <FloatTextBox Label="Enter email" @bind-Value="loginInfo.Email" />
+                <ValidationMessage For="@(() => loginInfo.Email)" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem ColSpanMd="12" CssClass="d-block">
+                <FloatTextBox Label="Enter password" Type="password" @bind-Value="loginInfo.Password" />
+                <ValidationMessage For="@(() => loginInfo.Password)" />
+            </DxFormLayoutItem>
+        </DxFormLayout>
+        <div class="mb-3">
+            <DxCheckBox CssClass="w-100" @bind-Checked="RememberMe" LabelPosition="LabelPosition.Right">
+                Remember me
+            </DxCheckBox>
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+            <DxButton SubmitFormOnClick="true" Text="Login" RenderStyle="ButtonRenderStyle.None" CssClass="btn-custom-primary fw-bold"></DxButton>
+        </div>  
+        <div class="text-center">
+            <div class="tm-8 fs-825">
+                Do not have an account?
+            </div>
+            <DxButton Text="Create an account"
+                        NavigateUrl="/register"
+                        RenderStyle="ButtonRenderStyle.Link" />
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private bool RememberMe { get; set; }
+
+    public LoginInfo loginInfo = new LoginInfo() { };
+    private EditContext loginContext;
+
+    protected override void OnInitialized()
+    {
+        loginContext = new(loginInfo);
+        loginContext.SetFieldCssClassProvider(new ValidationFieldClassProvider());
+    }
+
+    void HandleValidSubmit()
+    {
+        //Handle login submit
+        NavManager.NavigateTo("/account");
+    }
+}

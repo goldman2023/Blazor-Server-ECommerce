@@ -1,0 +1,29 @@
+﻿.previous-info {
+    border: 1px solid #d9d9d9;
+    font-size: 14px;
+    letter-spacing: .5px;
+}
+
+    .previous-info div:not(:last-child) {
+        border-bottom: 1px solid #d9d9d9;
+    }
+
+.payment-method, .billing-address {
+    border: 1px solid #d9d9d9;
+    font-size: 14px;
+    letter-spacing: .5px;
+}
+
+.payment-method-item, .billing-address-item {
+    cursor: pointer;
+}
+
+.payment-group-content {
+    background-color: #fafafa;
+    font-size : 14px;
+    letter-spacing : .5px;
+}
+
+.group-header-label img {
+    height: 25px;
+}

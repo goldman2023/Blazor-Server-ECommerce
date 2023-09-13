@@ -1,0 +1,10 @@
+﻿.group-header {
+    color: #9e3039;
+}
+
+.badge {
+    color: #9e3039;
+    letter-spacing: .5px;
+    font-weight: 600;
+    font-size: 12px;
+}

@@ -1,0 +1,32 @@
+﻿@inject IJSRuntime JsRuntime
+
+<div class="form-floating w-100">
+    @inherits InputText
+    <input id="@Id" @attributes="AdditionalAttributes" type="@Type" class="form-control @CssClass" placeholder="Type here..." @bind="CurrentValue" @bind:event="oninput">
+    <label class="text-secondary">@Label</label>
+</div>
+
+@code {
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string? Type { get; set; } = "text";
+
+    [Parameter]
+    public string? Mask { get; set; }
+
+    Guid Id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Id = Guid.NewGuid();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Mask != null)
+        {
+            await JsRuntime.InvokeVoidAsync("addIMask", Id, Mask);
+        }
+    }
+}

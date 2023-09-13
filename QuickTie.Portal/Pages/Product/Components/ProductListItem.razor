@@ -1,0 +1,68 @@
+﻿@using QuickTie.Data.Models
+@using QuickTie.Portal.Models
+@using QuickTie.Portal.Extensions
+@inject IJSRuntime JSRuntime
+@inject ICartService _cartService
+
+<div class="col-12">
+    <div class="product-item mb-3 w-100 py-1 text-md-start text-sm-center text-start">
+        <div class="row g-0">
+            <div class="col-lg-3 col-md-5 col-sm-12 col-5 py-3 d-flex justify-content-center">
+                <a href="/product/@productItem.Id" class="position-relative">
+                    <img src="@productItem.Images[0].Location" class="product-img" alt="Product image">
+                </a>
+            </div>
+            <div class="col-lg-9 col-md-7 col-sm-12 col-7">
+                <div class="row g-0 h-100">
+                    <div class="col-lg-8">
+                        <div class="product-item-detail p-3 ps-lg-0 h-100 d-flex flex-column">
+                            <a href="/product/@productItem.Id" class="position-relative text-decoration-none text-black">
+                                <h5 class="card-title fw-bold">
+                                    @((MarkupString)productItem.Name.HighlightText(searchText))
+                                </h5>
+                            </a>
+                            <p class="product-description">@productItem.Description</p>
+                            <div class="badge-container mt-auto">
+                                <span class="badge text-uppercase">@productItem.ProductType.GetEnumDisplayName()</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="product-item-action h-100 p-3 border-start border-1">
+                            <h5 class="card-title">
+                                <span class="fw-bold product-price">$@productItem.UnitCost</span>
+                                <span class="text-decoration-line-through text-muted ps-2">$@productItem.UnitCost</span>
+                            </h5>
+                            <p class="card-text"><small class="text-muted">Available <span>@productItem.CartonQuantity (In Stock)</span></small></p>
+                            <DxButton CssClass="btn-custom-secondary-outline w-100" RenderStyle="ButtonRenderStyle.None" Click="() => AddToCart(productItem)">Add to cart</DxButton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Product? productItem { get; set; }
+
+    [Parameter]
+    public string searchText { get; set; } = "";
+
+    private async Task AddToCart(Product item)
+    {
+        CartItem cartItem = new CartItem()
+            {
+                ItemId = item.Id,
+                ItemName = item.Name,
+                ImageURL = item.Images[0].Location,
+                Quantity = 1,
+                PricePerUnit = (decimal)item.UnitCost,
+                Type = item.ProductType.GetEnumDisplayName()
+            };
+        await _cartService.AddItemAsync(cartItem);
+        await JSRuntime.InvokeVoidAsync("toggleDrawer", "drawer");
+    }
+}

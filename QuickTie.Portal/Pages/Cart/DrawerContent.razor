@@ -1,0 +1,90 @@
+﻿@using QuickTie.Portal.Pages.Cart.Components
+@using QuickTie.Portal.Models
+
+@inject ICartService _cartService
+@inject IJSRuntime JSRuntime
+
+<div id="drawer-content" class="d-flex flex-column d-none">
+
+    <!-- Cart Drawer Header -->
+    <div class="cart-drawer-header pt-3 px-3">
+        <div class="position-relative">
+            <button type="button" class="btn-close drawer-close" aria-label="Close" @onclick="ToggleDrawer"></button>
+       </div>
+        <div class="d-flex pb-2">
+            <span class="fa-solid fa-cart-shopping fa-2xl mx-auto py-3 position-relative"></span>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    @if (Cart != null && Cart.Items != null && Cart.Items.Any())
+    {
+        <!-- Cart Drawer Body -->
+        <div class="cart-drawer-body px-3">
+            @foreach (var item in Cart.Items)
+            {
+                <DrawerCartItem item="item" HandleLoadCart="HandleLoadCart" />
+            }
+        </div>
+
+        <!-- Cart Drawer Action -->
+        <div class="cart-drawer-action position-relative mt-auto pt-2 pb-3 px-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="fw-bold">Subtotal</p>
+                <p class="ms-auto">$@Cart?.SubTotalPrice</p>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="fw-bold">Shipping</p>
+                <p class="ms-auto">FREE</p>
+            </div>
+            <div class="p-3 bg-secondary bg-opacity-10 mb-3">
+                <p class="text-center mb-0">
+                    <span class="fw-bold">QuickTie </span>
+                    Free 2-Day Shipping & Returns
+                </p>
+                <div class="d-flex justify-content-center text-capitalize text-black">
+                    <a href="#" class="text-black">Learn More</a>
+                    <span class="mx-2"> | </span>
+                    <a href="#" class="text-black">Sign In</a>
+                </div>
+            </div>
+            <DxButton RenderStyle="ButtonRenderStyle.None" Text="proceed to checkout" CssClass="text-uppercase px-3 py-2 w-100 btn-custom-1" NavigateUrl="/checkout/contact-information" />
+        </div>
+    }
+    else
+    {
+        <div class="text-center p-3">
+            <h6>Your Cart is Empty</h6>
+        </div>
+    }
+</div>
+
+@code
+{
+    private Cart? Cart { get; set; }
+    private DotNetObjectReference<DrawerContent>? objectReference;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            objectReference = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("initDrawerContentReference", objectReference);
+            await HandleLoadCart();
+        }
+    }
+
+    private async Task ToggleDrawer()
+    {
+        await JSRuntime.InvokeVoidAsync("toggleDrawer", "drawer");
+    }
+
+    [JSInvokable]
+    public async Task HandleLoadCart()
+    {
+        Cart = await _cartService.GetCartAsync();
+        StateHasChanged();
+    }
+}
